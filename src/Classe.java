@@ -1,23 +1,15 @@
-import java.util.ArrayList;
-import java.util.List;
-
-
 public class Classe {
 	
-	private Case caze;
-	private List<Case> cases;
-	
-	public Classe(Case caze) {
-		this.caze = caze;
-		cases = new ArrayList<Case>();
-		cases.add(caze);
+	private Case parent;
+
+	public Classe() {
+		this.parent = null;
 	}
-	
-	public Boolean contient(Case caze) {
-		return cases.contains(caze);
+
+	public Case getParent() {
+		return parent;
 	}
-	
-	public List<Case> getCases() {
-		return cases;
+	public void setParent(Case caze) {
+		this.parent = caze;
 	}
 }

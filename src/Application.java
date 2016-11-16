@@ -3,7 +3,7 @@
 
 public class Application {
 	public static void main(String[] args) {
-		Jeux jeux = new Jeux();
+		Jeu jeu = new Jeu();
 	}
 	
 

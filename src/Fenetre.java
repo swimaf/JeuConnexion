@@ -1,20 +1,18 @@
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 import javax.swing.*;
 
 public class Fenetre extends JFrame {
 	
 	private JPanel panel;
-	private Jeux jeux;
+	private Jeu jeu;
 	private Case[][] cases;
 	
-	public Fenetre(Jeux jeux) {
+	public Fenetre(Jeu jeu) {
 		this.setTitle("Jeu connexion");
 		this.setSize(500, 500);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -22,7 +20,7 @@ public class Fenetre extends JFrame {
 		panel = new JPanel();
 		panel.setLayout(new GridLayout(Constantes.x, Constantes.y));
 		
-		this.jeux = jeux;
+		this.jeu = jeu;
 		cases = new Case [Constantes.x][Constantes.y];
 		
 		for (int i = 0; i < Constantes.x; i++) {
@@ -34,10 +32,10 @@ public class Fenetre extends JFrame {
 				bouton.setForeground(Color.WHITE);
 				bouton.addActionListener(new OnClickButton());
 				panel.add(bouton);
-				jeux.ajouterClasse(bouton);
+				jeu.ajouterClasse();
 			}
 		}
-		jeux.initialisationEtoiles(cases);
+		jeu.initialisationEtoiles(cases);
 		this.setContentPane(panel);
 		this.setVisible(true);
 	}
@@ -46,8 +44,7 @@ public class Fenetre extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			Case bouton = (Case) e.getSource();
 			if (bouton.getJ_() == null) {
-				jeux.tour(bouton);
-				
+				jeu.tour(bouton);
 			}
 		}
 	}
@@ -60,11 +57,11 @@ public class Fenetre extends JFrame {
 		this.panel = panel;
 	}
 
-	public ArrayList<Case> getCases() {
+	public Case[][] getCases() {
 		return cases;
 	}
 
-	public void setCases(ArrayList<Case> cases) {
+	public void setCases(Case[][] cases) {
 		this.cases = cases;
 	}
 	
