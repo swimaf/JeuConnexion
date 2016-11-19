@@ -1,22 +1,20 @@
-import javax.swing.JButton;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
-public class Case extends JButton{
+import javax.swing.*;
 
-	private static int nbButton = 0;
+public class Case extends JButton {
 
-	private int index;
     private int nbLiaison;
 	private int x_;
 	private int y_;
 	private Joueur j_;
-	
-	public Case (int x, int y){
+    private Case parent_;
+
+    public Case (int x, int y){
 		super();
-		index = nbButton;
 		x_ = x;
 		y_ = y;
         nbLiaison = 1;
-        nbButton++;
     }
 	
 	public int getX_() {
@@ -40,19 +38,28 @@ public class Case extends JButton{
 		this.j_ = j;
 	}
 
-	public int getIndex() {
-		return index;
-	}
-
-	public void setIndex(int index) {
-		this.index = index;
-	}
-
     public int getNbLiaison() {
         return nbLiaison;
     }
 
     public void addLiaison(int nbLiaison) {
         this.nbLiaison += nbLiaison;
+    }
+
+	public Case getParent_() {
+		return parent_;
+	}
+
+	public void setParent_(Case parent) {
+		this.parent_ = parent;
+	}
+
+	public boolean equals(Object object) {
+        Case caze = (Case) object;
+        return caze.getY_() == this.y_ && caze.getX_() == this.x_;
+    }
+
+    public String toString() {
+        return "Y = "  + this.y_ + " X = " +this.x_;
     }
 }

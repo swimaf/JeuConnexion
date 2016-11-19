@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 
@@ -7,22 +6,16 @@ public class Jeu {
 
 	private Joueur j1;
 	private Joueur j2;
-	private Joueur joueur_courant;
+	private Joueur joueurCourant;
 	private Fenetre fenetre;
-	private List<Classe> listEnsemble;
-	
+
 	public Jeu() {
 		j1 = new Joueur("Pepito");
 		j2 = new Joueur("Pepita");
-		joueur_courant = j1;
-		listEnsemble = new ArrayList<>();
+		joueurCourant = j1;
 		fenetre = new Fenetre(this);
 	}
 
-	public void ajouterClasse() {
-		listEnsemble.add(new Classe());
-	}
-	
 	public Joueur getJ1() {
 		return j1;
 	}
@@ -40,39 +33,39 @@ public class Jeu {
 	}
 
 	public Joueur getJoueurCourant() {
-		return joueur_courant;
+		return joueurCourant;
 	}
 
 	public void changerJoueur() {
-		if(joueur_courant.equals(j1)) {
-			this.joueur_courant = j2;
+		if(joueurCourant.equals(j1)) {
+			this.joueurCourant = j2;
 		} else {
-			this.joueur_courant = j1;
+			this.joueurCourant = j1;
 		}
 	}
 	
 	public void tour(Case bouton) {
-		bouton.setJ_(joueur_courant);
+		bouton.setJ_(joueurCourant);
 		colorerCase(bouton);
 		changerJoueur();
 		unionSiPossible(bouton);
-		//fenetre.setTitle("A "+joueur_courant.getNom_() +", de jouer");
+		//fenetre.setTitle("A "+joueurCourant.getNom_() +", de jouer");
 
 
         //TEST A SUPPRIMER PLUS TARD
-        int k = 0;
-        for(Classe classe: listEnsemble) {
-            if(k % 8 ==0) {
-                System.out.println();
-            }
-            if(classe.getParent() == null) {
-                System.out.print(k +"\t|");
-            } else {
-                System.out.print(classe.getParent().getIndex()+"\t|");
-            }
-            k++;
+        Case button;
+		for (int i = 0; i < Constantes.x; i++) {
+			for (int j = 0; j < Constantes.y; j++) {
+                button = fenetre.getCases()[i][j].getParent_();
+                if(button == null) {
+                    System.out.print(null + "\t|");
+                } else {
+                    System.out.print("(" +button.getX_() + ","+button.getY_()  +"T=" + button.getNbLiaison()+ ")\t|");
+                }
+
+			}
+            System.out.println();
         }
-        System.out.println();
 
     }
 	
@@ -102,13 +95,12 @@ public class Jeu {
 	}
 
 	public Case classe(Case caze) {
-        if(listEnsemble.get(caze.getIndex()).getParent() == null) {
+        if(caze.getParent_() == null) {
             return caze;
         } else {
-            Classe classeParent = listEnsemble.get(caze.getIndex());
-            Case racine = classe(classeParent.getParent());
-            classeParent.setParent(racine);
-            return racine;
+            Case parent = classe(caze.getParent_());
+            caze.setParent_(parent);
+            return parent;
         }
     }
 
@@ -116,6 +108,7 @@ public class Jeu {
         Case racine = classe(caze);
         Case caseCourante;
         Case racineCaseCourante;
+        Case racinePredente = null;
         int departX = caze.getX_() == 0 ? 0 : caze.getX_() - 1;
         int departY = caze.getY_() == 0 ? 0 : caze.getY_() - 1;
         int finX = caze.getX_() == Constantes.x-1 ? caze.getX_() : caze.getX_() + 1;
@@ -128,15 +121,23 @@ public class Jeu {
                     racineCaseCourante = classe(caseCourante);
 
                     if (caseCourante.getJ_() == racine.getJ_() ) {
-                        if(racineCaseCourante.getNbLiaison() > racine.getNbLiaison()) {
-                            listEnsemble.get(racine.getIndex()).setParent(racineCaseCourante);
-                            racineCaseCourante.addLiaison(caseCourante.getNbLiaison());
+                        System.out.println("Racine predecente"+racinePredente);
+                        System.out.println("Racine racineCaseCourante"+racineCaseCourante);
+
+                        if(racinePredente == null || !racineCaseCourante.equals(racinePredente)) {
+                            if (racineCaseCourante.getNbLiaison() > racine.getNbLiaison()) {
+                                racine.setParent_(racineCaseCourante);
+                                racineCaseCourante.addLiaison(racineCaseCourante.getNbLiaison());
+                                racinePredente = racineCaseCourante;
+                            } else {
+                                racineCaseCourante.setParent_(racine);
+                                racine.addLiaison(racine.getNbLiaison());
+                                racinePredente = racine;
+                            }
                         } else {
-                            listEnsemble.get(racineCaseCourante.getIndex()).setParent(racine);
-                            racine.addLiaison(racineCaseCourante.getNbLiaison());
+                            System.out.println("test");
                         }
                     }
-
                     //fenetre.getCases()[i][j].setBackground(Color.black);
                 }
             }

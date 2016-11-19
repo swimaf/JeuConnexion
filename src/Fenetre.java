@@ -15,27 +15,26 @@ public class Fenetre extends JFrame {
 	public Fenetre(Jeu jeu) {
 		this.setTitle("Jeu connexion");
 		this.setSize(500, 500);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null);
 		panel = new JPanel();
 		panel.setLayout(new GridLayout(Constantes.x, Constantes.y));
-		
+
 		this.jeu = jeu;
 		cases = new Case [Constantes.x][Constantes.y];
-		
+
 		for (int i = 0; i < Constantes.x; i++) {
 			for (int j = 0; j < Constantes.y; j++) {
 				Case bouton = new Case(i, j);
 				cases[i][j] = bouton;
-				bouton.setBackground(Color.white);
+				bouton.setBackground(Color.WHITE);
 				bouton.setFont(new Font(null, Font.PLAIN, 40));
 				bouton.setForeground(Color.WHITE);
 				bouton.addActionListener(new OnClickButton());
 				panel.add(bouton);
-				jeu.ajouterClasse();
 			}
 		}
-		jeu.initialisationEtoiles(cases);
+		//jeu.initialisationEtoiles(cases);
 		this.setContentPane(panel);
 		this.setVisible(true);
 	}
