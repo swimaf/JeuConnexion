@@ -2,6 +2,7 @@ package Action;
 
 import Default.Fenetre;
 
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 
@@ -15,7 +16,7 @@ public class AfficheScore implements Action {
 
     @Override
     public ActionListener getEvent() {
-        return null;
+        return e -> parent.getJeu().afficherScore();
     }
 
     @Override

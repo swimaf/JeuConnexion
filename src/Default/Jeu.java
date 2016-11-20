@@ -2,6 +2,7 @@ package Default;
 
 import javafx.util.Pair;
 
+import java.awt.*;
 import java.util.*;
 
 
@@ -11,11 +12,9 @@ public class Jeu {
 	private Joueur j2;
 	private Joueur joueurCourant;
 	private Fenetre fenetre;
+    private int nbEtoilesAConquerir;
 
 	Jeu() {
-		j1 = new Joueur("Pepito");
-		j2 = new Joueur("Pepita");
-		joueurCourant = j1;
 		fenetre = new Fenetre(this);
         initialisation(fenetre.getCases());
 	}
@@ -53,8 +52,8 @@ public class Jeu {
         if (bouton.getJ_() == null) {
             bouton.setJ_(joueurCourant);
             bouton.setBackground(bouton.getJ_().getColor_());
-            changerJoueur();
             relieComposantes(bouton);
+            changerJoueur();
 
             //A Supprimer
             affichageTerminal();
@@ -71,7 +70,7 @@ public class Jeu {
                 if(button == null) {
                     System.out.print(null + "\t|");
                 } else {
-                    System.out.print("(" +button.getX_() + ","+button.getY_()  +"T=" + button.getNbLiaison()+ ")\t|");
+                    System.out.print("(" +button.getX_() + ","+button.getY_()  +"T=" + button.getNbLiaison()+ " E="+button.getNbEtoiles()+"\t\t|");
                 }
             }
             System.out.println();
@@ -86,9 +85,15 @@ public class Jeu {
     }
 
 	private void initialisation(Case[][] cases) {
+        j1 = new Joueur("Joueur rouge");
+        j2 = new Joueur("Joueur bleu");
+        joueurCourant = j1;
+
         Random random = new Random();
         ArrayList<Pair<Integer, Integer>> etoiles = new ArrayList<>();
-		int etoile = (2 + (random.nextInt(Constantes.MAX_CASE_INIT))) * 2;
+		int etoile = (2 + (random.nextInt(Constantes.MAX_CASE_INIT)));
+        nbEtoilesAConquerir = etoile;
+        etoile *= 2;
         Pair<Integer, Integer> tmp;
         Case courante;
 
@@ -98,6 +103,7 @@ public class Jeu {
 				etoiles.add(tmp);
                 courante = cases[tmp.getKey()][tmp.getValue()];
                 courante.setText("*");
+                courante.setNbEtoiles(1);
                 colorerCase(courante);
 			}
 		}
@@ -117,7 +123,7 @@ public class Jeu {
         Case racineCaseCourante;
         ArrayList<Case> chemins = new ArrayList<>();
         int nbLiaison = 0;
-
+        int nbEtoiles = 0;
         int departX = caze.getX_() == 0 ? 0 : caze.getX_() - 1;
         int departY = caze.getY_() == 0 ? 0 : caze.getY_() - 1;
         int finX = caze.getX_() == Constantes.x-1 ? caze.getX_() : caze.getX_() + 1;
@@ -128,7 +134,10 @@ public class Jeu {
                 racineCaseCourante = classe(fenetre.getCases()[i][j]);
                 if (racineCaseCourante.getJ_() == caze.getJ_() && !chemins.contains(racineCaseCourante)) {
                     chemins.add(racineCaseCourante);
+                    nbEtoiles += racineCaseCourante.getNbEtoiles();
                     nbLiaison += racineCaseCourante.getNbLiaison();
+                    System.out.println(racineCaseCourante);
+                    System.out.println(nbEtoiles);
                 }
             }
         }
@@ -136,11 +145,18 @@ public class Jeu {
         Collections.sort(chemins, (o1, o2) -> o1.getNbLiaison() > o2.getNbLiaison() ? -1 : 0);
         Case racineDesChemins = chemins.get(0);
         racineDesChemins.setNbLiaison(nbLiaison);
+        racineDesChemins.setNbEtoiles(nbEtoiles);
+        joueurCourant.setEtoilesMax(nbEtoiles);
         chemins.remove(0);
         for (Case chemin : chemins) {
             chemin.setParent_(racineDesChemins);
         }
         print(chemins.size()+" ont été reliés");
+
+        if(nbEtoiles == nbEtoilesAConquerir) {
+            print(joueurCourant.getNom_() + " à gagné");
+        }
+
         return chemins.size();
     }
 
@@ -172,28 +188,43 @@ public class Jeu {
 
     public int relierCasesMin(Case c1, Case c2) {
         int response = 0;
+        int departX, finX, departY, finY;
+        if(c1.getX_() > c2.getX_()) {
+            departX = c2.getX_();
+            finX = c1.getX_();
+        } else {
+            departX = c1.getX_();
+            finX = c2.getX_();
+        }
+        if(c1.getY_() > c2.getY_()) {
+            departY = c2.getY_();
+            finY = c1.getY_();
+        } else {
+            departY = c1.getY_();
+            finY = c2.getY_();
+        }
+        for (int i = departX; i <= finX; i++) {
+            for (int j = departY; j <= finY; j++) {
+                fenetre.getCases()[i][j].setBackground(Color.black);
+            }
+        }
         return response;
     }
 
     public int nombreEtoiles(int x, int y) {
         Case base = classe(fenetre.getCases()[x][y]);
-        Case courant;
-        int result = 0;
-        for(int i=0; i<Constantes.x; i++) {
-            for(int j=0; j<Constantes.y; j++) {
-                courant = fenetre.getCases()[i][j];
-                if(classe(courant).equals(base) && courant.getText().equals("*")) {
-                    result++;
-                }
-            }
-        }
-        print("Il y a "+result+" étoiles dans cette composante");
-        return result;
+        print("Il y a "+base.getNbEtoiles()+" étoiles dans cette composante");
+        return base.getNbEtoiles();
     }
 
     public void joueDeuxHumains() {
         fenetre.generateGrille(true);
         initialisation(fenetre.getCases());
+    }
+
+    public void afficherScore() {
+        print("Score de "+j1.getNom_() +" : "+j1.getEtoilesMax() + "\n"+
+              "Score de "+j2.getNom_() +" : "+j2.getEtoilesMax());
     }
 
     public void abandonner() {

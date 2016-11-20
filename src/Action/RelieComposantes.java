@@ -2,11 +2,8 @@ package Action;
 
 import Default.Case;
 import Default.Fenetre;
-import Dialogue.AbstractDialog;
-import Dialogue.DialogCase;
 import Dialogue.DialogDoubleCase;
 
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**

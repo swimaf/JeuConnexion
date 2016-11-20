@@ -9,12 +9,14 @@ public class Case extends JButton {
 	private int y_;
 	private Joueur j_;
     private Case parent_;
+	private int nbEtoiles;
 
     Case(int x, int y){
 		super();
 		x_ = x;
 		y_ = y;
         nbLiaison = 1;
+		nbEtoiles = 0;
     }
 	
 	int getX_() {
@@ -60,5 +62,13 @@ public class Case extends JButton {
 
     public String toString() {
         return this.x_ + ", " +this.y_;
+    }
+
+    public int getNbEtoiles() {
+        return nbEtoiles;
+    }
+
+    public void setNbEtoiles(int nbEtoiles) {
+        this.nbEtoiles = nbEtoiles;
     }
 }

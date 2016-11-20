@@ -1,10 +1,7 @@
 package Action;
 
 import Default.Fenetre;
-import Dialogue.AbstractDialog;
 import Dialogue.DialogCase;
-
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class NombreEtoiles implements Action {

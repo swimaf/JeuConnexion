@@ -4,7 +4,6 @@ import Default.Case;
 import Default.Fenetre;
 import Dialogue.DialogDoubleCase;
 
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class RelierCasesMin implements Action{

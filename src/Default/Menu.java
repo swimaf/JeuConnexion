@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class Menu extends JPanel {
 
     private Fenetre frame;
-    private JTextField console;
+    private JTextArea console;
     private ArrayList<Action> elements;
     private ArrayList<JButton> buttons;
 
@@ -22,14 +22,17 @@ public class Menu extends JPanel {
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.createListe();
 
-        this.console = new JTextField();
+        this.console = new JTextArea();
         this.console.setEditable(false);
+        this.console.setBackground(Color.getColor("#e5e5e5"));
+        this.console.setBorder(BorderFactory.createTitledBorder("Console"));
+
         for (Action element : elements) {
             JButton button = new JButton(element.getTitle());
             button.addActionListener(element.getEvent());
-            button.setAlignmentX(Component.CENTER_ALIGNMENT);
+            button.setMaximumSize(new Dimension(Integer.MAX_VALUE, button.getMinimumSize().height));
+            button.setAlignmentX(CENTER_ALIGNMENT);
             buttons.add(button);
-            this.add(Box.createVerticalGlue());
             this.add(button);
         }
         this.add(console);
@@ -56,7 +59,7 @@ public class Menu extends JPanel {
         buttons.get(buttons.size()-1).setEnabled(!game);
     }
 
-    public JTextField getConsole() {
+    public JTextArea getConsole() {
         return console;
     }
 }

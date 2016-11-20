@@ -17,6 +17,6 @@ public class JoueDeuxHumains implements Action {
 
     @Override
     public String getTitle() {
-        return "Jeux deux humains";
+        return "Joue deux humains";
     }
 }

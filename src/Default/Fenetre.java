@@ -33,9 +33,7 @@ public class Fenetre extends JFrame {
         generateGrille(false);
 
         panel.add(grille);
-        panel.add(Box.createGlue());
         panel.add(menu);
-        panel.add(Box.createGlue());
 
 
         this.setContentPane(panel);
