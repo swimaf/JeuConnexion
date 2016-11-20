@@ -2,8 +2,9 @@ package Default;
 
 import javafx.util.Pair;
 
-import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
 
 
 public class Jeu {
@@ -187,27 +188,11 @@ public class Jeu {
     }
 
     public int relierCasesMin(Case c1, Case c2) {
-        int response = 0;
-        int departX, finX, departY, finY;
-        if(c1.getX_() > c2.getX_()) {
-            departX = c2.getX_();
-            finX = c1.getX_();
-        } else {
-            departX = c1.getX_();
-            finX = c2.getX_();
-        }
-        if(c1.getY_() > c2.getY_()) {
-            departY = c2.getY_();
-            finY = c1.getY_();
-        } else {
-            departY = c1.getY_();
-            finY = c2.getY_();
-        }
-        for (int i = departX; i <= finX; i++) {
-            for (int j = departY; j <= finY; j++) {
-                fenetre.getCases()[i][j].setBackground(Color.black);
-            }
-        }
+        int response;
+        int hauteur = Math.abs(c1.getX_() - c2.getX_());
+        int largeur = Math.abs(c1.getY_() - c2.getY_());
+        response = hauteur > largeur ? hauteur-1 : largeur-1;
+        print("Nombre de case a relier"+response);
         return response;
     }
 

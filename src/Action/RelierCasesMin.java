@@ -15,6 +15,7 @@ public class RelierCasesMin implements Action{
         dialogDoubleCase = new DialogDoubleCase(parent, getTitle()) {
             @Override
             public void executer(Case c1, Case c2) {
+                System.out.println("TEST");
                 parent.getJeu().relierCasesMin(c1, c2);
             }
         };
