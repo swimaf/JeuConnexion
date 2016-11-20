@@ -1,4 +1,4 @@
-import com.sun.org.apache.xpath.internal.operations.Bool;
+package Default;
 
 import javax.swing.*;
 
@@ -10,56 +10,55 @@ public class Case extends JButton {
 	private Joueur j_;
     private Case parent_;
 
-    public Case (int x, int y){
+    Case(int x, int y){
 		super();
 		x_ = x;
 		y_ = y;
         nbLiaison = 1;
     }
 	
-	public int getX_() {
+	int getX_() {
 		return x_;
 	}
 	public void setX_(int x) {
 		this.x_ = x;
 	}
-	public int getY_() {
+	int getY_() {
 		return y_;
 	}
 	public void setY_(int y) {
 		this.y_ = y;
 	}
 	
-	public Joueur getJ_(){
+	Joueur getJ_(){
 		return j_;
 	}
 	
-	public void setJ_(Joueur j){
+	void setJ_(Joueur j){
 		this.j_ = j;
 	}
 
-    public int getNbLiaison() {
+    int getNbLiaison() {
         return nbLiaison;
     }
 
-    public void addLiaison(int nbLiaison) {
-        this.nbLiaison += nbLiaison;
+    void setNbLiaison(int nbLiaison) {
+        this.nbLiaison = nbLiaison;
     }
 
-	public Case getParent_() {
+	Case getParent_() {
 		return parent_;
 	}
 
-	public void setParent_(Case parent) {
+	void setParent_(Case parent) {
 		this.parent_ = parent;
 	}
 
-	public boolean equals(Object object) {
-        Case caze = (Case) object;
+	public boolean equals(Case caze) {
         return caze.getY_() == this.y_ && caze.getX_() == this.x_;
     }
 
     public String toString() {
-        return "Y = "  + this.y_ + " X = " +this.x_;
+        return this.x_ + ", " +this.y_;
     }
 }

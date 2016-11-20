@@ -1,12 +1,14 @@
+package Default;
+
 import java.awt.Color;
 
-public class Joueur {
+class Joueur {
 	private String nom_;
 	private Color couleur_;
 	
 	private static int i = 0;
 
-	public Joueur (String nom){
+	Joueur(String nom){
 		nom_ = nom;
 		if (i % 2 == 0){
 			couleur_ = Constantes.r;
@@ -24,7 +26,7 @@ public class Joueur {
 		this.nom_ = nom_;
 	}
 	
-	public Color getColor_() {
+	Color getColor_() {
 		return couleur_;
 	}
 
