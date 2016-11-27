@@ -1,8 +1,7 @@
 package Action;
 
-import Default.Case;
 import Default.Fenetre;
-import Dialogue.DialogDoubleCase;
+import Dialogue.DialogCase;
 
 import java.awt.event.ActionListener;
 
@@ -10,13 +9,13 @@ import java.awt.event.ActionListener;
  * Created by martinet on 19/11/16.
  */
 public class RelieComposantes implements Action {
-    private DialogDoubleCase dialogDoubleCase;
+    private DialogCase dialogDoubleCase;
 
     public RelieComposantes(Fenetre parent) {
-        dialogDoubleCase = new DialogDoubleCase(parent, getTitle()) {
+        dialogDoubleCase = new DialogCase(parent, getTitle()) {
             @Override
-            public void executer(Case c1, Case c2) {
-                //parent.getJeu().
+            public void executer(int x1, int y1) {
+                parent.getJeu().relieComposantes(parent.getCases()[x1][y1]);
             }
         };
     }

@@ -25,15 +25,14 @@ public abstract class DialogDoubleCase extends AbstractDialog {
         JButton jButton = new JButton("Valider");
 
         jButton.addActionListener(e -> {
-            //try {
+            try {
                 Case c1 = parent.getCases()[Integer.parseInt(jTextFieldX.getText())][ Integer.parseInt(jTextFieldY.getText())];
                 Case c2 = parent.getCases()[Integer.parseInt(jTextFieldX2.getText())][ Integer.parseInt(jTextFieldY2.getText())];
 
                 executer(c1,c2);
-            /*}catch (Exception i) {
+            }catch (Exception i) {
                 System.out.println("Champs texte non conforme !");
-                System.out.println(i);
-            }*/
+            }
         });
 
         jPanel.setLayout(new BoxLayout(jPanel, BoxLayout.Y_AXIS));

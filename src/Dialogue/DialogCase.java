@@ -36,6 +36,7 @@ public abstract class DialogCase extends AbstractDialog implements ActionListene
             executer(x1,y1);
         }catch (Exception i) {
             System.out.println("Champs texte non conforme !");
+            System.out.println(i);
         }
     }
     abstract public void executer(int x1, int y1);

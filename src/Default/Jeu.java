@@ -108,6 +108,7 @@ public class Jeu {
                 courante = cases[tmp.getKey()][tmp.getValue()];
                 courante.setText("*");
                 courante.setNbEtoiles(1);
+                joueurCourant.addEtoiles(courante);
                 colorerCase(courante);
 			}
 		}
@@ -122,8 +123,19 @@ public class Jeu {
             return parent;
         }
     }
-    private int relieComposantes(Case caze) {
-        return 0;
+    public long relieComposantes(Case caze) {
+        long count = 0;
+        if(caze.getJ_() == null) {
+            count = getVoisins(caze).stream()
+                    .map(this::classe)
+                    .distinct()
+                    .filter(aCase -> aCase.getJ_() != null && aCase.getJ_().equals(joueurCourant))
+                    .count();
+            print("Nombre de liaison :"+count);
+        } else {
+            print("Impossible car la case est déjà coloriée ");
+        }
+        return count;
     }
 
 	private int union(Case caze) {
@@ -284,5 +296,9 @@ public class Jeu {
         print(joueurCourant.getNom_() + " a gagné !");
         fenetre.generateGrille(false);
         initialisation(fenetre.getCases());
+    }
+
+    public void evaluerCase1(Case c1) {
+        relierCasesMin(c1, joueurCourant.getCentreMasse(fenetre));
     }
 }

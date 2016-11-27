@@ -1,6 +1,7 @@
 package Default;
 
-import java.awt.Color;
+import java.awt.*;
+import java.util.ArrayList;
 
 class Joueur {
     private static int i = 0;
@@ -8,10 +9,13 @@ class Joueur {
     private String nom_;
 	private Color couleur_;
 	private int etoilesMax;
+	private ArrayList<Case> etoiles;
+    private Case centreMasse;
 
 	Joueur(String nom){
 		nom_ = nom;
 		etoilesMax = 0;
+        etoiles = new ArrayList<>();
 		if (i % 2 == 0){
 			couleur_ = Constantes.r;
 		} else {
@@ -45,5 +49,32 @@ class Joueur {
         if(etoilesMax > this.etoilesMax) {
             this.etoilesMax = etoilesMax;
         }
+    }
+
+    public Case getCentreMasse(Fenetre fenetre) {
+        if(centreMasse == null) {
+            int x = 0;
+            int y = 0;
+            for (Case c : etoiles) {
+                x += c.getX_();
+                y += c.getY_();
+            }
+            centreMasse = fenetre.getCases()[x/etoiles.size()][y/etoiles.size()];
+            centreMasse.setText("M");
+            centreMasse.setBackground(Color.black);
+        }
+        return centreMasse;
+    }
+
+    public void setCentreMasse(Case centreMasse) {
+        this.centreMasse = centreMasse;
+    }
+
+    public ArrayList<Case> getEtoiles() {
+        return etoiles;
+    }
+
+    public void addEtoiles(Case etoile) {
+        this.etoiles.add(etoile);
     }
 }
