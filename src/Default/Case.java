@@ -71,4 +71,5 @@ public class Case extends JButton {
     public void setNbEtoiles(int nbEtoiles) {
         this.nbEtoiles = nbEtoiles;
     }
+
 }

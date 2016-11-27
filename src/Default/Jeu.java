@@ -5,6 +5,7 @@ import javafx.util.Pair;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
+import java.util.TreeMap;
 
 
 public class Jeu {
@@ -14,8 +15,10 @@ public class Jeu {
 	private Joueur joueurCourant;
 	private Fenetre fenetre;
     private int nbEtoilesAConquerir;
+    private TreeMap<Integer, ArrayList<Case>> chemins;
+    private boolean matrice[][];
 
-	Jeu() {
+    Jeu() {
 		fenetre = new Fenetre(this);
         initialisation(fenetre.getCases());
 	}
@@ -53,7 +56,7 @@ public class Jeu {
         if (bouton.getJ_() == null) {
             bouton.setJ_(joueurCourant);
             bouton.setBackground(bouton.getJ_().getColor_());
-            relieComposantes(bouton);
+            union(bouton);
             changerJoueur();
 
             //A Supprimer
@@ -119,8 +122,11 @@ public class Jeu {
             return parent;
         }
     }
+    private int relieComposantes(Case caze) {
+        return 0;
+    }
 
-	private int relieComposantes(Case caze) {
+	private int union(Case caze) {
         Case racineCaseCourante;
         ArrayList<Case> chemins = new ArrayList<>();
         int nbLiaison = 0;
@@ -137,7 +143,6 @@ public class Jeu {
                     chemins.add(racineCaseCourante);
                     nbEtoiles += racineCaseCourante.getNbEtoiles();
                     nbLiaison += racineCaseCourante.getNbLiaison();
-                    System.out.println(racineCaseCourante);
                     System.out.println(nbEtoiles);
                 }
             }
@@ -152,8 +157,6 @@ public class Jeu {
         for (Case chemin : chemins) {
             chemin.setParent_(racineDesChemins);
         }
-        print(chemins.size()+" ont été reliés");
-
         if(nbEtoiles == nbEtoilesAConquerir) {
             print(joueurCourant.getNom_() + " à gagné");
         }
@@ -187,13 +190,77 @@ public class Jeu {
         return response;
     }
 
+
+    private ArrayList<Case> getVoisins(Case c1) {
+        ArrayList<Case> cases = new ArrayList<>();
+        int departX = c1.getX_() == 0 ? 0 : c1.getX_() - 1;
+        int departY = c1.getY_() == 0 ? 0 : c1.getY_() - 1;
+        int finX = c1.getX_() >= Constantes.x-1 ? c1.getX_() : c1.getX_() + 1;
+        int finY = c1.getY_() >= Constantes.y-1 ? c1.getY_() : c1.getY_() + 1;
+        for (int i = departX; i <= finX; i++) {
+            for (int j = departY; j <= finY; j++) {
+                if (!(c1.getX_() == i && c1.getY_() == j)) {
+                    cases.add(fenetre.getCases()[i][j]);
+                }
+            }
+        }
+        return cases;
+    }
+
+    private int relierCasesMin(Case c1, Case c2, int nbCases) {
+        System.out.println(c1);
+        if(!c1.equals(c2)) {
+            for (Case c : getVoisins(c1)) {
+                if (!(matrice[c.getX_()][c.getY_()])) {
+                    matrice[c.getX_()][c.getY_()] = true;
+                    if (fenetre.getCases()[c.getX_()][c.getY_()].getJ_() == null) {
+                        ajouterChemin(nbCases + 1, fenetre.getCases()[c.getX_()][c.getY_()]);
+                    } else if (fenetre.getCases()[c.getX_()][c.getY_()].getJ_().equals(c2.getJ_())) {
+                        ajouterChemin(nbCases, fenetre.getCases()[c.getX_()][c.getY_()]);
+                    } else {
+                        ajouterChemin(Integer.MAX_VALUE, fenetre.getCases()[c.getX_()][c.getY_()]);
+                    }
+                }
+            }
+            Integer integer = chemins.firstEntry().getKey();
+            Case base = chemins.firstEntry().getValue().get(0);
+            chemins.firstEntry().getValue().remove(0);
+            if (chemins.firstEntry().getValue().isEmpty()) {
+                chemins.remove(integer);
+            }
+
+            return relierCasesMin(base, c2, integer);
+        }
+        return nbCases;
+    }
+
+    public void ajouterChemin(Integer entier, Case c) {
+        if(!chemins.containsKey(entier)) {
+            chemins.put(entier, new ArrayList<>());
+        }
+        chemins.get(entier).add(c);
+    }
+
     public int relierCasesMin(Case c1, Case c2) {
-        int response;
-        int hauteur = Math.abs(c1.getX_() - c2.getX_());
-        int largeur = Math.abs(c1.getY_() - c2.getY_());
-        response = hauteur > largeur ? hauteur-1 : largeur-1;
-        print("Nombre de case a relier"+response);
-        return response;
+        if(c1.getJ_() == null || c2.getJ_() == null) {
+            print("La case n'a pas de couleur");
+        } else if(!c1.getJ_().equals(c2.getJ_())) {
+            print("Les cases n'ont pas la même couleurs");
+        } else if(classe(c1).equals(classe(c2))) {
+            print("Nombre de case minimum 0");
+        } else {
+            chemins = new TreeMap<>();
+            matrice = new boolean[Constantes.x][Constantes.x];
+            for (int j = 0; j < matrice.length; j++) {
+                for (int k = 0; k < matrice.length; k++) {
+                    matrice[j][k] = false;
+                }
+            }
+            int i = relierCasesMin(c1, c2, 0);
+            print("Nombre de case minimum " + i);
+            return i;
+        }
+        return 0;
     }
 
     public int nombreEtoiles(int x, int y) {
