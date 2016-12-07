@@ -3,18 +3,20 @@ package Default;
 import java.awt.*;
 import java.util.ArrayList;
 
-class Joueur {
+abstract class Joueur {
     private static int i = 0;
 
-    private String nom_;
-	private Color couleur_;
-	private int etoilesMax;
-	private ArrayList<Case> etoiles;
-    private Case centreMasse;
+    protected String nom_;
+    protected Color couleur_;
+    protected int etoilesMax;
+    protected ArrayList<Case> etoiles;
+    protected Case centreMasse;
+    protected Jeu jeu;
 
-	Joueur(String nom){
+	Joueur(String nom, Jeu jeu){
 		nom_ = nom;
 		etoilesMax = 0;
+        this.jeu = jeu;
         etoiles = new ArrayList<>();
 		if (i % 2 == 0){
 			couleur_ = Constantes.r;
@@ -51,6 +53,8 @@ class Joueur {
         }
     }
 
+    abstract void jouer();
+
     public Case getCentreMasse(Fenetre fenetre) {
         if(centreMasse == null) {
             int x = 0;
@@ -60,8 +64,6 @@ class Joueur {
                 y += c.getY_();
             }
             centreMasse = fenetre.getCases()[x/etoiles.size()][y/etoiles.size()];
-            centreMasse.setText("M");
-            centreMasse.setBackground(Color.black);
         }
         return centreMasse;
     }
@@ -76,5 +78,13 @@ class Joueur {
 
     public void addEtoiles(Case etoile) {
         this.etoiles.add(etoile);
+    }
+
+    public Jeu getJeu() {
+        return jeu;
+    }
+
+    public void setJeu(Jeu jeu) {
+        this.jeu = jeu;
     }
 }

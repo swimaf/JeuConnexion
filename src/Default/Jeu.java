@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Random;
 import java.util.TreeMap;
 
-
 public class Jeu {
 
 	private Joueur j1;
@@ -15,12 +14,12 @@ public class Jeu {
 	private Joueur joueurCourant;
 	private Fenetre fenetre;
     private int nbEtoilesAConquerir;
-    private TreeMap<Integer, ArrayList<Case>> chemins;
+    private TreeMap<Integer, ArrayList<Arbre>> chemins;
     private boolean matrice[][];
-
+    private Arbre arbre;
     Jeu() {
 		fenetre = new Fenetre(this);
-        initialisation(fenetre.getCases());
+        initialisation(fenetre.getCases(), false);
 	}
 
 
@@ -52,21 +51,27 @@ public class Jeu {
 		}
 	}
 
-    public void colorerCase(Case bouton) {
+    public void colorerCaseInitialisation(Case bouton) {
+        bouton.setJ_(joueurCourant);
+        bouton.setBackground(bouton.getJ_().getColor_());
+        union(bouton);
+        changerJoueur();
+    }
+
+
+    public void colorerCaseJeu(Case bouton) {
         if (bouton.getJ_() == null) {
             bouton.setJ_(joueurCourant);
             bouton.setBackground(bouton.getJ_().getColor_());
             union(bouton);
             changerJoueur();
-
-            //A Supprimer
-            affichageTerminal();
+            joueurCourant.jouer();
         } else {
             print("Case déjà colorié");
         }
     }
 
-    public void affichageTerminal() {
+    /*public void affichageTerminal() {
         Case button;
         for (int i = 0; i < Constantes.x; i++) {
             for (int j = 0; j < Constantes.y; j++) {
@@ -82,15 +87,16 @@ public class Jeu {
         System.out.println();
         System.out.println();
         System.out.println();
-    }
+    }*/
 
     public void colorerCase(int x, int y){
-        colorerCase(fenetre.getCases()[x][y]);
+        colorerCaseJeu(fenetre.getCases()[x][y]);
     }
 
-	private void initialisation(Case[][] cases) {
-        j1 = new Joueur("Joueur rouge");
-        j2 = new Joueur("Joueur bleu");
+	private void initialisation(Case[][] cases, boolean withIA) {
+        j1 = new Humain("Joueur rouge", this);
+        j2 = withIA ? new IA("Joueur bleu", this) :new Humain("Joueur bleu", this);
+
         joueurCourant = j1;
 
         Random random = new Random();
@@ -109,7 +115,7 @@ public class Jeu {
                 courante.setText("*");
                 courante.setNbEtoiles(1);
                 joueurCourant.addEtoiles(courante);
-                colorerCase(courante);
+                colorerCaseInitialisation(courante);
 			}
 		}
 	}
@@ -155,7 +161,6 @@ public class Jeu {
                     chemins.add(racineCaseCourante);
                     nbEtoiles += racineCaseCourante.getNbEtoiles();
                     nbLiaison += racineCaseCourante.getNbLiaison();
-                    System.out.println(nbEtoiles);
                 }
             }
         }
@@ -171,21 +176,31 @@ public class Jeu {
         }
         if(nbEtoiles == nbEtoilesAConquerir) {
             print(joueurCourant.getNom_() + " à gagné");
+            fenetre.generateGrille(false);
+            initialisation(fenetre.getCases(), false);
         }
 
         return chemins.size();
     }
 
 
-    public void afficheComposante(int x, int y) {
-        String reponse = "{";
-        Case base = classe(fenetre.getCases()[x][y]);
+    public ArrayList<Case> composante(Case c) {
+        ArrayList<Case> cases = new ArrayList<>();
         for(int i=0; i<Constantes.x; i++) {
             for(int j=0; j<Constantes.y; j++) {
-                if(classe(fenetre.getCases()[i][j]).equals(base)) {
-                    reponse+= "(" +fenetre.getCases()[i][j] +"), ";
+                if(classe(fenetre.getCases()[i][j]).equals(c)) {
+                    cases.add(fenetre.getCases()[i][j]);
                 }
             }
+        }
+        return cases;
+    }
+
+    public void afficheComposante(int x, int y) {
+        ArrayList<Case> cases = composante(classe(fenetre.getCases()[x][y]));
+        String reponse = "{";
+        for (Case aCase : cases) {
+            reponse+= "(" +aCase +"), ";
         }
         reponse += "}";
         print(reponse);
@@ -203,7 +218,7 @@ public class Jeu {
     }
 
 
-    private ArrayList<Case> getVoisins(Case c1) {
+    public ArrayList<Case> getVoisins(Case c1) {
         ArrayList<Case> cases = new ArrayList<>();
         int departX = c1.getX_() == 0 ? 0 : c1.getX_() - 1;
         int departY = c1.getY_() == 0 ? 0 : c1.getY_() - 1;
@@ -219,34 +234,34 @@ public class Jeu {
         return cases;
     }
 
-    private int relierCasesMin(Case c1, Case c2, int nbCases) {
-        System.out.println(c1);
-        if(!c1.equals(c2)) {
-            for (Case c : getVoisins(c1)) {
+    private int relierCasesMin(Arbre arbre, Case c1, int nbCases) {
+        if(!c1.equals(arbre.getValue())) {
+            for (Case c : getVoisins(arbre.getValue())) {
                 if (!(matrice[c.getX_()][c.getY_()])) {
                     matrice[c.getX_()][c.getY_()] = true;
                     if (fenetre.getCases()[c.getX_()][c.getY_()].getJ_() == null) {
-                        ajouterChemin(nbCases + 1, fenetre.getCases()[c.getX_()][c.getY_()]);
-                    } else if (fenetre.getCases()[c.getX_()][c.getY_()].getJ_().equals(c2.getJ_())) {
-                        ajouterChemin(nbCases, fenetre.getCases()[c.getX_()][c.getY_()]);
+                        ajouterChemin(nbCases + 1, arbre.addChild(fenetre.getCases()[c.getX_()][c.getY_()]));
+                    } else if (fenetre.getCases()[c.getX_()][c.getY_()].getJ_().equals(c1.getJ_())) {
+                        ajouterChemin(nbCases, arbre.addChild(fenetre.getCases()[c.getX_()][c.getY_()]));
                     } else {
-                        ajouterChemin(Integer.MAX_VALUE, fenetre.getCases()[c.getX_()][c.getY_()]);
+                        ajouterChemin(Integer.MAX_VALUE, arbre.addChild(fenetre.getCases()[c.getX_()][c.getY_()]));
                     }
                 }
             }
             Integer integer = chemins.firstEntry().getKey();
-            Case base = chemins.firstEntry().getValue().get(0);
+            Arbre base = chemins.firstEntry().getValue().get(0);
             chemins.firstEntry().getValue().remove(0);
             if (chemins.firstEntry().getValue().isEmpty()) {
                 chemins.remove(integer);
             }
 
-            return relierCasesMin(base, c2, integer);
+            return relierCasesMin(base, c1 , integer);
         }
+        this.arbre = arbre;
         return nbCases;
     }
 
-    public void ajouterChemin(Integer entier, Case c) {
+    public void ajouterChemin(Integer entier, Arbre c) {
         if(!chemins.containsKey(entier)) {
             chemins.put(entier, new ArrayList<>());
         }
@@ -268,11 +283,23 @@ public class Jeu {
                     matrice[j][k] = false;
                 }
             }
-            int i = relierCasesMin(c1, c2, 0);
+
+            int i = relierCasesMin(new Arbre(null, c1), c2 ,  0);
             print("Nombre de case minimum " + i);
+
             return i;
         }
         return 0;
+    }
+
+    public ArrayList<Case> getChemin() {
+        ArrayList<Case> cases = new ArrayList<>();
+        cases.add(arbre.getValue());
+        while(arbre.getParent() != null) {
+            cases.add(arbre.getValue());
+            arbre = arbre.getParent();
+        }
+        return cases;
     }
 
     public int nombreEtoiles(int x, int y) {
@@ -283,7 +310,7 @@ public class Jeu {
 
     public void joueDeuxHumains() {
         fenetre.generateGrille(true);
-        initialisation(fenetre.getCases());
+        initialisation(fenetre.getCases(), false);
     }
 
     public void afficherScore() {
@@ -295,10 +322,24 @@ public class Jeu {
         changerJoueur();
         print(joueurCourant.getNom_() + " a gagné !");
         fenetre.generateGrille(false);
-        initialisation(fenetre.getCases());
+        initialisation(fenetre.getCases(), false);
     }
 
     public void evaluerCase1(Case c1) {
         relierCasesMin(c1, joueurCourant.getCentreMasse(fenetre));
+    }
+
+    public void joueHumainOrdi() {
+        fenetre.generateGrille(true);
+        initialisation(fenetre.getCases(), true);
+        jouer();
+    }
+
+    public void jouer() {
+        joueurCourant.jouer();
+    }
+
+    public Fenetre getFenetre() {
+        return fenetre;
     }
 }

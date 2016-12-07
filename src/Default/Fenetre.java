@@ -1,12 +1,9 @@
 package Default;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.*;
 
 public class Fenetre extends JFrame {
 
@@ -62,7 +59,7 @@ public class Fenetre extends JFrame {
 		public void actionPerformed(ActionEvent e) {
             if(e.getSource() instanceof Case) {
                 Case bouton = (Case) e.getSource();
-				jeu.colorerCase(bouton);
+				jeu.colorerCaseJeu(bouton);
             }
 		}
 	}
