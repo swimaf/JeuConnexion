@@ -47,7 +47,6 @@ public class Menu extends JPanel {
         elements.add(new NombreEtoiles(frame));
         elements.add(new AfficheScore(frame));
         elements.add(new RelieComposantes(frame));
-        elements.add(new EvaluerCaseZ(frame));
         elements.add(new JoueDeuxHumains(frame));
         elements.add(new JoueHumainOrdi(frame));
         elements.add(new Abandonner(frame));

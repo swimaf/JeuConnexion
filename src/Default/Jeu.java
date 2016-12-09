@@ -17,7 +17,7 @@ public class Jeu {
     private TreeMap<Integer, ArrayList<Arbre>> chemins;
     private boolean matrice[][];
     private Arbre arbre;
-    Jeu() {
+    public Jeu() {
 		fenetre = new Fenetre(this);
         initialisation(fenetre.getCases(), false);
 	}
@@ -39,7 +39,7 @@ public class Jeu {
 		return joueurCourant;
 	}
 
-	void execute() {
+	public void execute() {
         fenetre.setVisible(true);
     }
 
@@ -325,9 +325,6 @@ public class Jeu {
         initialisation(fenetre.getCases(), false);
     }
 
-    public void evaluerCase1(Case c1) {
-        relierCasesMin(c1, joueurCourant.getCentreMasse(fenetre));
-    }
 
     public void joueHumainOrdi() {
         fenetre.generateGrille(true);
